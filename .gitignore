@@ -1,0 +1,13 @@
+.env
+
+# Ignore the folder with thousands of library files
+node_modules
+
+# Ignore the folder with user-uploaded images
+uploads/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
