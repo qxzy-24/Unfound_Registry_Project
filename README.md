@@ -42,14 +42,36 @@ The Unfound Registry is a full-stack web application that enables collectors, in
 
 ## 🏗️ Architecture
 
+The codebase follows a **modular, layered architecture** — each concern (config, middleware, routes, queries, errors) lives in its own file under `src/`.
+
 ```
 unfound-registry-api/
-├── server.js              # Express server — all API routes & middleware
+├── server.js                        # Entry point — wires middleware, routes & startup
+├── src/
+│   ├── config/
+│   │   └── db.js                    # MySQL pool + promise wrapper
+│   ├── middleware/
+│   │   ├── auth.js                  # JWT authentication & admin authorization
+│   │   ├── rateLimiter.js           # In-memory rate limiting (auth endpoints)
+│   │   └── upload.js                # Multer disk storage, file filter & size limits
+│   ├── queries/
+│   │   ├── artifactQueries.js       # All artifact SQL (CRUD, search, report)
+│   │   ├── userQueries.js           # User SQL (register, login lookup)
+│   │   └── adminQueries.js          # Admin SQL (stats, user list, delete)
+│   ├── routes/
+│   │   ├── index.js                 # Central router — mounts all sub-routers
+│   │   ├── healthRoutes.js          # GET  /api/health
+│   │   ├── authRoutes.js            # POST /api/register, POST /api/login
+│   │   ├── artifactRoutes.js        # CRUD /api/artifacts
+│   │   ├── aiRoutes.js              # POST /api/analyze-image, /api/generate-report
+│   │   └── adminRoutes.js           # GET/DELETE /api/admin/*
+│   └── errors/
+│       └── errorHandler.js          # Centralized error handler (multer + unhandled)
 ├── Public/
-│   └── index.html         # Single-page frontend (Tailwind CSS + vanilla JS)
-├── uploads/               # User-uploaded artifact images (git-ignored)
-├── .env                   # Environment variables (git-ignored)
-├── .env.example           # Template for required environment variables
+│   └── index.html                   # Single-page frontend (Tailwind CSS + vanilla JS)
+├── uploads/                         # User-uploaded artifact images (git-ignored)
+├── .env                             # Environment variables (git-ignored)
+├── .env.example                     # Template for required environment variables
 ├── package.json
 └── .gitignore
 ```
